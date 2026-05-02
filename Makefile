@@ -26,11 +26,11 @@ lint:
 
 # Run tests with project-local pytest install
 test:
-	PYTHONPATH="$(PWD)/.vendor" python -m pytest -q .
+	PYTHONPATH="$(PWD):$(PWD)/.vendor" python -m pytest -q .
 
 # Run tests with coverage report
 coverage:
-	. .venv/bin/activate && PYTHONPATH="$(PWD)/.vendor" python -m pytest -q --cov --cov-report=term-missing .
+	. .venv/bin/activate && PYTHONPATH="$(PWD):$(PWD)/.vendor" python -m pytest -q --cov --cov-report=term-missing .
 
 # Run all verification steps
 verify: compile lint test coverage
