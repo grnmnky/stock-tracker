@@ -5,6 +5,8 @@ __pycache__/
 
 .vendor
 
+data
+
 # C extensions
 *.so
 
