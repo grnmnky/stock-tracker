@@ -34,3 +34,10 @@ stock-analyzer/
 - Data persistence with JSON
 - Flask web application basics
 - CLI tool development
+### Data Structures
+- **List/Deque** — Store price history for sliding window calculations (SMA, EMA)
+- **Dictionary** — Map stock symbols to price data and indicators
+- **namedtuple/dataclass** — Represent OHLC (Open, High, Low, Close) candlesticks
+- **defaultdict** — Group news headlines by stock symbol
+- **heapq** — Find top performing stocks (max/min heap)
+- **pandas DataFrame** — Efficient tabular data for analysis and calculations 
