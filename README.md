@@ -22,8 +22,10 @@ A stock analysis tool that calculates technical indicators and visualizes trends
 2. pip install -r requirements.txt
 3. [anything else?]
 ### Usage
-1. Start web dashboard: python web/app.py
-2. View at http://localhost:5000
+1. run tests: `make test`
+2. Start web dashboard: python web/app.py
+3. View at http://localhost:5000
+
 ### Project Structure
 stock-analyzer/
 ├── requirements.txt

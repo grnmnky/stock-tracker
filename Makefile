@@ -1,4 +1,4 @@
-.PHONY: setup generate run clean
+.PHONY: setup generate run test clean
 
 # Default setup: virtualenv and dependencies
 setup:
@@ -14,7 +14,12 @@ generate:
 run:
 	. .venv/bin/activate && python web/app.py
 
+# Run tests with project-local pytest install
+test:
+	PYTHONPATH="$(PWD)/.vendor" python -m pytest -q
+
 # Cleanup environment and data
 clean:
 	rm -rf .venv
+	rm -rf .vendor
 	rm -rf data/*.json
