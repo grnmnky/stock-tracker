@@ -18,9 +18,19 @@ A stock analysis tool that calculates technical indicators and visualizes trends
 ### Prerequisites
 1. Python 3.10+, pip
 ### Installation
+1. Clone/download repo
+2. pip install -r requirements.txt
+3. [anything else?]
 ### Usage
-
-## Project Structure
-
-## Learning Goals
-How the Yahoo Finance stock tracker works, web scraping, and flask API.
+1. Start web dashboard: python web/app.py
+2. View at http://localhost:5000
+### Project Structure
+stock-analyzer/
+├── requirements.txt
+├── main.py
+### Learning Goals
+- Implement technical indicator algorithms (SMA, EMA, RSI, Bollinger Bands)
+- Web scraping with BeautifulSoup
+- Data persistence with JSON
+- Flask web application basics
+- CLI tool development
