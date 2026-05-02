@@ -1,4 +1,4 @@
-.PHONY: setup generate run compile test clean
+.PHONY: setup generate run compile lint test coverage verify clean
 
 SYMBOL ?= MSFT
 
@@ -20,9 +20,20 @@ run:
 compile:
 	. .venv/bin/activate && python -m compileall -q .
 
+# Lint Python code (prefer ruff, fallback to compile check)
+lint:
+	. .venv/bin/activate && (python -c "import importlib.util, sys; sys.exit(0 if importlib.util.find_spec('ruff') else 1)" && python -m ruff check . || python -m compileall -q .)
+
 # Run tests with project-local pytest install
 test:
 	PYTHONPATH="$(PWD)/.vendor" python -m pytest -q .
+
+# Run tests with coverage report
+coverage:
+	. .venv/bin/activate && PYTHONPATH="$(PWD)/.vendor" python -m pytest -q --cov --cov-report=term-missing .
+
+# Run all verification steps
+verify: compile lint test coverage
 
 # Cleanup environment and data
 clean:
