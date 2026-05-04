@@ -1,4 +1,6 @@
 import sys
+import pandas as pd
+import numpy as np
 from pathlib import Path
 
 # Setup path to include src directory
@@ -6,8 +8,9 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from src.analyzer import calculate_sma, calculate_ema
+from src.analyzer import calculate_sma, calculate_ema, calculate_bollinger_bands
 import pytest
+
 
 @pytest.mark.describe("calculate_sma")
 class TestCalculateSMA:
@@ -94,3 +97,21 @@ class TestCalculateEMA:
         # EMA_1 = 10.0
         # EMA_2 = (20 * 1.0) + (10 * 0) = 20.0...
         assert calculate_ema(prices, window) == [10.0, 20.0, 30.0]
+
+@pytest.mark.describe("bollinger_bands")
+class TestBollingerBands:
+    def test_bb_insufficient_data_returns_nulls(self):
+        # Only 5 data points for a 20-period window
+        short_series = pd.Series([10, 12, 11, 13,12])
+        upper, middle, lower = calculate_bollinger_bands(short_series, window=20)
+
+        # All outputs should be null because the window was never met
+        assert upper.isnull().all()
+        assert middle.isnull().all()
+        assert lower.isnull().all()
+
+    def test_bb_invalid_input_data(self):
+        with pytest.raises(TypeError, match="must be a pandas series"):
+        # This will pass only if a TypeError is raised AND 
+        # the message contains "must be a pandas Series"
+            calculate_bollinger_bands([1, 2, 3], window=20)

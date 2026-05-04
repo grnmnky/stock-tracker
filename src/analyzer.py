@@ -1,3 +1,5 @@
+import pandas as pd
+
 def calculate_sma(prices: list[float], window: int) -> list[float | None]:
     if window <= 0:
         raise ValueError("window must be greater than 0")
@@ -45,3 +47,15 @@ def calculate_ema(prices: list[float], window: int) -> list[float] | None:
         ema_values.append(ema_now)
 
     return ema_values
+
+def calculate_bollinger_bands(prices: pd.Series, window: int) -> tuple[pd.Series, pd.Series, pd.Series]:
+    if not isinstance(prices, pd.Series):
+        raise TypeError("must be a pandas series")
+
+    middle_band = prices.rolling(window=window).mean()
+    std_dev = prices.rolling(window=window).std()
+    
+    upper_band = middle_band + (std_dev * 2)
+    lower_band = middle_band - (std_dev * 2)
+
+    return upper_band, middle_band, lower_band
