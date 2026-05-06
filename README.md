@@ -4,34 +4,53 @@
 A stock analysis tool that calculates technical indicators and visualizes trends using mock data. Built to practice Python fundamentals: data structures, algorithms, web scraping, and Flask.
 
 ## Features
+
 1. Mock stock data generator — Create realistic fake stock prices locally
+
 2. Technical indicators — Calculate SMA, EMA, Bollinger Bands, RSI
+
 3. Web dashboard — Flask app showing stock charts + indicators
+
 4. Yahoo Finance scraper — Pull financial news headlines
+
 5. CLI tool — Query stocks, run analysis from command line
+
 6. Local JSON storage — Persist mock data and news
 
 ## Tech Stack
+
 1. Flask
 
 ## Getting Started
+
 ### Prerequisites
+
 1. Python 3.10+, pip
+
 ### Installation
+
 1. Clone/download repo
+
 2. pip install -r requirements.txt
+
 3. [anything else?]
+
 ### Usage
+
 1. run tests, lint, and coverage: `make verify`
+
 2. Start web dashboard: python web/app.py
-3. View at http://localhost:5000
+
+3. View at <http://localhost:5000>
 
 ### Project Structure
+
 stock-analyzer/
 ├── requirements.txt
 ├── main.py
 
 ### Learning Goals
+
 - Implement technical indicator algorithms (SMA, EMA, RSI, Bollinger Bands)
 - Web scraping with BeautifulSoup
 - Data persistence with JSON
@@ -39,6 +58,7 @@ stock-analyzer/
 - CLI tool development
 
 ### Data Structures
+
 - **List/Deque** — Store price history for sliding window calculations (SMA, EMA)
 - **Dictionary** — Map stock symbols to price data and indicators
 - **namedtuple/dataclass** — Represent OHLC (Open, High, Low, Close) candlesticks
@@ -47,6 +67,7 @@ stock-analyzer/
 - **pandas DataFrame** — Efficient tabular data for analysis and calculations 
 
 ### Stock Market Knowledge
+
 SMA (Simple Moving Average)
 The SMA is the average price of a stock over a specific number of time periods. It is calculated by adding the closing prices for a set duration (e.g., 50 days) and dividing by that number. It smooths out price volatility to help identify the overall direction of a trend.
 
