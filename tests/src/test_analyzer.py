@@ -117,19 +117,19 @@ class TestBollingerBands:
             calculate_bollinger_bands([1, 2, 3], window=20)
 
     def test_bb_invalid_window_zero(self):
-        prices = [10, 20, 30, 40, 50]
+        prices = pd.Series([10, 20, 30, 40, 50])
         # Testing that a window of 0 raises the expected error
         with pytest.raises(ValueError, match="window must be greater than 0"):
             calculate_bollinger_bands(prices, window=0)
 
     def test_bb_invalid_window_negative(self):
-        prices = [10, 20, 30, 40, 50]
+        prices = pd.Series([10, 20, 30, 40, 50])
         # Testing that a negative window raises the expected error
         with pytest.raises(ValueError, match="window must be greater than 0"):
             calculate_bollinger_bands(prices, window=-5)
 
     def test_bb_empty_list_data(self):
-        prices = pd.Series([])
+        prices = pd.Series([], dtype=float)
         window = 20
 
         upper, middle, lower = calculate_bollinger_bands(prices, window)
@@ -137,4 +137,25 @@ class TestBollingerBands:
         assert upper.isnull().all()
         assert middle.isnull().all()
         assert lower.isnull().all()
+
+    def test_bb_invalid_window_type_float(self):
+        prices = pd.Series([10, 20, 30, 40, 50])
+        with pytest.raises(TypeError, match="window must be an integer"):
+            calculate_bollinger_bands(prices, window=5.5)
+
+    def test_bb_invalid_window_type_string(self):
+        prices = pd.Series([10, 20, 30, 40, 50])
+        with pytest.raises(TypeError, match="window must be an integer"):
+            calculate_bollinger_bands(prices, window="10")
+
+    def test_bb_invalid_window_type_boolean(self):
+        prices = pd.Series([10, 20, 30, 40, 50])
+        with pytest.raises(TypeError, match="window must be an integer"):
+            # True is an instance of int in Python, so we must explicitly catch it
+            calculate_bollinger_bands(prices, window=True)
+
+    def test_bb_non_numeric_series_elements(self):
+        non_numeric_prices = pd.Series(["10", "20", "30", "40", "50"]) # strings
+        with pytest.raises(TypeError, match="prices series must contain numeric data"):
+            calculate_bollinger_bands(non_numeric_prices, window=3)
 
