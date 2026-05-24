@@ -115,3 +115,26 @@ class TestBollingerBands:
         # This will pass only if a TypeError is raised AND 
         # the message contains "must be a pandas Series"
             calculate_bollinger_bands([1, 2, 3], window=20)
+
+    def test_bb_invalid_window_zero(self):
+        prices = [10, 20, 30, 40, 50]
+        # Testing that a window of 0 raises the expected error
+        with pytest.raises(ValueError, match="window must be greater than 0"):
+            calculate_bollinger_bands(prices, window=0)
+
+    def test_bb_invalid_window_negative(self):
+        prices = [10, 20, 30, 40, 50]
+        # Testing that a negative window raises the expected error
+        with pytest.raises(ValueError, match="window must be greater than 0"):
+            calculate_bollinger_bands(prices, window=-5)
+
+    def test_bb_empty_list_data(self):
+        prices = pd.Series([])
+        window = 20
+
+        upper, middle, lower = calculate_bollinger_bands(prices, window)
+
+        assert upper.isnull().all()
+        assert middle.isnull().all()
+        assert lower.isnull().all()
+

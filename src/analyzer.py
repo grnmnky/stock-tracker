@@ -49,6 +49,11 @@ def calculate_ema(prices: list[float], window: int) -> list[float] | None:
     return ema_values
 
 def calculate_bollinger_bands(prices: pd.Series, window: int) -> tuple[pd.Series, pd.Series, pd.Series]:
+    
+
+    if window <= 0:
+        raise ValueError("window must be greater than 0")
+
     if not isinstance(prices, pd.Series):
         raise TypeError("must be a pandas series")
 
