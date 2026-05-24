@@ -101,30 +101,24 @@ class TestCalculateEMA:
 @pytest.mark.describe("bollinger_bands")
 class TestBollingerBands:
     def test_bb_insufficient_data_returns_nulls(self):
-        # Only 5 data points for a 20-period window
         short_series = pd.Series([10, 12, 11, 13,12])
         upper, middle, lower = calculate_bollinger_bands(short_series, window=20)
 
-        # All outputs should be null because the window was never met
         assert upper.isnull().all()
         assert middle.isnull().all()
         assert lower.isnull().all()
 
     def test_bb_invalid_input_data(self):
         with pytest.raises(TypeError, match="must be a pandas series"):
-        # This will pass only if a TypeError is raised AND 
-        # the message contains "must be a pandas Series"
             calculate_bollinger_bands([1, 2, 3], window=20)
 
     def test_bb_invalid_window_zero(self):
         prices = pd.Series([10, 20, 30, 40, 50])
-        # Testing that a window of 0 raises the expected error
         with pytest.raises(ValueError, match="window must be greater than 0"):
             calculate_bollinger_bands(prices, window=0)
 
     def test_bb_invalid_window_negative(self):
         prices = pd.Series([10, 20, 30, 40, 50])
-        # Testing that a negative window raises the expected error
         with pytest.raises(ValueError, match="window must be greater than 0"):
             calculate_bollinger_bands(prices, window=-5)
 
@@ -151,11 +145,73 @@ class TestBollingerBands:
     def test_bb_invalid_window_type_boolean(self):
         prices = pd.Series([10, 20, 30, 40, 50])
         with pytest.raises(TypeError, match="window must be an integer"):
-            # True is an instance of int in Python, so we must explicitly catch it
             calculate_bollinger_bands(prices, window=True)
 
     def test_bb_non_numeric_series_elements(self):
-        non_numeric_prices = pd.Series(["10", "20", "30", "40", "50"]) # strings
+        non_numeric_prices = pd.Series(["10", "20", "30", "40", "50"])
+
         with pytest.raises(TypeError, match="prices series must contain numeric data"):
             calculate_bollinger_bands(non_numeric_prices, window=3)
+
+    def test_bb_simple_window(self):
+        prices = pd.Series([10.0, 20.0, 30.0])
+        window = 3
+        
+        upper, middle, lower = calculate_bollinger_bands(prices, window)
+        
+        assert pd.isna(middle.iloc[0])
+        assert pd.isna(middle.iloc[1])
+        
+        assert middle.iloc[2] == 20.0
+        assert upper.iloc[2] == 40.0
+        assert lower.iloc[2] == 0.0
+
+    def test_bb_zero_volatility(self):
+        """Tests that flat lines (no volatility) have converging bands without issues."""
+        prices = pd.Series([15.0, 15.0, 15.0, 15.0, 15.0])
+        window = 3
+        
+        upper, middle, lower = calculate_bollinger_bands(prices, window)
+
+        for i in range(2, 5):
+            assert middle.iloc[i] == 15.0
+            assert upper.iloc[i] == 15.0
+            assert lower.iloc[i] == 15.0
+
+    def test_bb_index_preservation(self):
+        """Tests that the dates/indices of the input Series are fully preserved in the output."""
+        dates = pd.date_range(start="2026-05-01", periods=5)
+        prices = pd.Series([10, 12, 11, 13, 12], index=dates)
+        window = 3
+        
+        upper, middle, lower = calculate_bollinger_bands(prices, window)
+
+        assert (upper.index == dates).all()
+        assert (middle.index == dates).all()
+        assert (lower.index == dates).all()
+
+    def test_bb_exact_window_length(self):
+        """Tests when the series length is precisely equal to the rolling window."""
+        prices = pd.Series([10.0, 20.0, 30.0, 40.0])
+        window = 4
+        
+        upper, middle, lower = calculate_bollinger_bands(prices, window)
+        
+        assert upper.iloc[:3].isnull().all()
+        
+        assert not pd.isna(upper.iloc[3])
+        assert middle.iloc[3] == 25.0
+
+    def test_bb_handles_nan_in_prices(self):
+        """Tests that input gaps (NaNs) are handled gracefully and standard Pandas NaN propagation happens."""
+        # Index 2 has an explicit NaN value
+        prices = pd.Series([10.0, 20.0, np.nan, 40.0, 50.0])
+        window = 3
+        
+        upper, middle, lower = calculate_bollinger_bands(prices, window)
+        
+        # Rolling calculations containing a NaN in their window will output NaN
+        assert pd.isna(middle.iloc[2])  # Window [10, 20, NaN]
+        assert pd.isna(middle.iloc[3])  # Window [20, NaN, 40]
+        assert pd.isna(middle.iloc[4])  # Window [NaN, 40, 50]
 
